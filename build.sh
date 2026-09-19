@@ -8,9 +8,11 @@ elif [ -f "backend/requirements.txt" ]; then
     pip install -r backend/requirements.txt
 fi
 
-if [ -d "backend" ]; then
+if [ -f "manage.py" ]; then
+    python manage.py collectstatic --no-input
+    python manage.py migrate
+elif [ -f "backend/manage.py" ]; then
     cd backend
+    python manage.py collectstatic --no-input
+    python manage.py migrate
 fi
-
-python manage.py collectstatic --no-input
-python manage.py migrate
