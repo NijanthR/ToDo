@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create your TaskFlow Account{% endblock %}
+
+{% block body %}
+<div class="auth-page-container">
+  
+  <!-- Top Bar with Theme Toggle -->
+  <div class="auth-top-nav">
+    <a href="{% url 'todo:login' %}" class="sidebar-brand">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-primary);">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+        <path d="M2 17l10 5 10-5"></path>
+        <path d="M2 12l10 5 10-5"></path>
+      </svg>
+      <span>TaskFlow</span>
+    </a>
+
+    <button id="theme-toggle-btn" class="btn-ui-icon" title="Toggle Theme">
+      <span id="theme-toggle-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+        </svg>
+      </span>
+    </button>
+  </div>
+
+  <!-- Main Auth Box -->
+  <div class="auth-card-wrap">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1 class="auth-title">Create an account</h1>
+        <p class="auth-subtitle">Get your own private productivity workspace</p>
+      </div>
+
+      {% if form.errors %}
+        <div class="auth-error-alert">
+          {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+              <div>{{ error }}</div>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="POST" action="{% url 'todo:register' %}" autocomplete="off" id="auth-register-form">
+        {% csrf_token %}
+
+        <!-- Decoy hidden inputs to divert browser autofill -->
+        <input type="text" name="fake_user" style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;" tabindex="-1" autocomplete="off">
+        <input type="password" name="fake_pass" style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;" tabindex="-1" autocomplete="new-password">
+
+        <div class="field-group">
+          <label class="field-label" for="id_username">Username *</label>
+          {{ form.username }}
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="id_email">Email (optional)</label>
+          {{ form.email }}
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="id_password">Password *</label>
+          {{ form.password }}
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="id_confirm_password">Confirm Password *</label>
+          {{ form.confirm_password }}
+        </div>
+
+        <button type="submit" class="btn-ui btn-ui-primary" style="width: 100%; padding: 0.65rem; font-size: 0.9rem; margin-top: 0.75rem;">
+          Create Workspace
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <span>Already have an account?</span>
+        <a href="{% url 'todo:login' %}" class="auth-link">Sign in</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Ensure inputs start clean with no browser autofill on load
+  function clearRegisterAutofill() {
+    ['id_username', 'id_email', 'id_password', 'id_confirm_password'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && !el.matches(':focus')) {
+        el.value = '';
+      }
+    });
+  }
+  document.addEventListener('DOMContentLoaded', clearRegisterAutofill);
+  window.addEventListener('load', () => {
+    clearRegisterAutofill();
+    setTimeout(clearRegisterAutofill, 50);
+    setTimeout(clearRegisterAutofill, 200);
+  });
+</script>
+{% endblock %}
